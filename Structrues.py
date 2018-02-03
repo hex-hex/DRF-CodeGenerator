@@ -124,6 +124,8 @@ class EntityCode:
             .render({'modelFields': self})
         print(service_output)
 
-        model_output = self.jinja_env.get_template('model.kt') \
-            .render({'modelFields': self})
-        print(model_output)
+        with open('./kotlin_model/{}.kt'.format(self.toCamel(self.entity_name[0])), 'w+') as file:
+            model_output = self.jinja_env.get_template('model.kt') \
+                .render({'modelFields': self})
+            file.write(model_output)
+

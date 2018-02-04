@@ -8,4 +8,5 @@ class Address(EntityBase):
     street = models.CharField(max_length=512)
     post_code = models.IntegerField(null=True, blank=True) 
     """
+
     code = EntityCode(code)

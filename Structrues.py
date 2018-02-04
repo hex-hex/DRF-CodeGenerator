@@ -76,7 +76,7 @@ class IndentCode:
             type_def = list(itertools.takewhile(lambda x: '(' != x, type_def))
             type_def = ''.join(type_def)
             type_def = KEY_MAP[type_def]
-            reg_param = re.compile('\'[A-Z][a-z]+\'')
+            reg_param = re.compile('\'([A-Z][a-z]+)+\'')
             var_params = list(map(lambda x: reg_param.search(x).group(0).strip('\'') if reg_param.search(x) else '', self.words))
             var_params = list(filter(lambda x: len(x) > 0, var_params))
             return var_names, type_def, var_params

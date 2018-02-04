@@ -1,6 +1,9 @@
 class {{modelFields.entity_name}}Filter(FilterSet):
     {% for var in modelFields.child_vars[3]%}{{var[0]}}=RelatedFilter({{var[1][0]}}Filter, name='{{var[0]}}', queryset={{var[1][0]}}.objects.all())
-    {% endfor %}{% for var in modelFields.child_vars[4]%}{{var[0]}}=RelatedFilter({{var[1][0]}}Filter, name='{{var[0]}}', queryset={{var[1][0]}}){% endfor %}class Meta:
+    {% endfor %}{% for var in modelFields.child_vars[4]%}{{var[0]}} = RelatedFilter({{var[1][0]}}Filter, name='{{var[0]}}', queryset={{var[1][0]}}){% endfor %}{% if modelFields.has_base %}date_create = DateFromToRangeFilter()
+    date_update = DateFromToRangeFilter(){% endif %}
+
+    class Meta:
         model = {{modelFields.entity_name}}
         fields = { {% for var in modelFields.child_vars[1]%}
             '{{var[0]}}': ['exact', 'in', 'startswith', 'contains'], {% endfor %}{% for var in modelFields.child_vars[2]%}
@@ -8,13 +11,16 @@ class {{modelFields.entity_name}}Filter(FilterSet):
         }
 
 
+
 class {{modelFields.entity_name}}Serializer(serializers.ModelSerializer):
     {% for var in modelFields.child_vars[3]%}{{var[0]}}={{var[1][0]}}Serializer()
-    {% endfor %}{% for var in modelFields.child_vars[4]%}{{var[0]}}={{var[1][0]}}Serializer(many=True){% endfor %}class Meta:
+    {% endfor %}{% for var in modelFields.child_vars[4]%}{{var[0]}}={{var[1][0]}}Serializer(many=True){% endfor %}
+    class Meta:
         model = {{modelFields.entity_name}}
         {% if modelFields.has_base %}read_only_fields = ('date_create', 'date_update'){% endif %}
         fields = ('pk', {% for var in modelFields.child_vars[1]%}'{{var[0]}}', {% endfor %}{% for var in modelFields.child_vars[2]%}'{{var[0]}}',
             {% endfor %}{% for var in modelFields.child_vars[3]%}'{{var[0]}}', {% endfor %}{% for var in modelFields.child_vars[4]%}'{{var[0]}}', {% endfor %})
+
 
 
 class {{modelFields.entity_name}}ViewSet(ModelViewSet):

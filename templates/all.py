@@ -30,5 +30,5 @@ class {{modelFields.entity_name}}ViewSet(ModelViewSet):
     filter_class = {{modelFields.entity_name}}Filter
     serializer_class = {{modelFields.entity_name}}Serializer
     filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter,)
-    search_fields = ({% for var in modelFields.child_vars[1]%}'@{{var[0]}}', '${{var[0]}}', {% endfor %}{% for var in modelFields.child_vars[2]%}'={{var[0]}}', {% endfor %})
+    search_fields = ({% for var in modelFields.child_vars[1]%}'@{{var[0]}}', '${{var[0]}}', {% endfor %}{% for var in modelFields.child_vars[2]%}'={{var[0]}}', '@{{var[0]}}', {% endfor %})
     ordering_fields = '__all__'

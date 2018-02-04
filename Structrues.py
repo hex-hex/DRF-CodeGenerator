@@ -92,7 +92,7 @@ class EntityCode:
     jinja_env = jinja2.Environment(loader=jinja2.FileSystemLoader('./templates/'))
 
     def has_base(self):
-        'EntityBase' in self.entity_base
+        return 'EntityBase' in self.entity_base
 
     def toCamel(self, snake_name):
         return ''.join([word.capitalize() for word in snake_name.split('_')])

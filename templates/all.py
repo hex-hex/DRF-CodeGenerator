@@ -12,7 +12,7 @@ class {{modelFields.entity_name}}Filter(FilterSet):
 
 
 
-class {{modelFields.entity_name}}Serializer(serializers.ModelSerializer):
+class {{modelFields.entity_name}}Serializer(ModelSerializer):
     {% for var in modelFields.child_vars[3]%}{{var[0]}}={{var[1][0]}}Serializer()
     {% endfor %}{% for var in modelFields.child_vars[4]%}{{var[0]}}={{var[1][0]}}Serializer(many=True){% endfor %}
     class Meta:

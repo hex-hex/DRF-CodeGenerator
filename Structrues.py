@@ -135,3 +135,4 @@ class EntityCode:
             model_output = self.jinja_env.get_template('model.kt') .render({'modelFields': self})
             file.write(model_output)
 
+

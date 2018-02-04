@@ -1,5 +1,6 @@
 class {{modelFields.entity_name}}Filter(FilterSet):
-    class Meta:
+    {% for var in modelFields.child_vars[3]%}{{var[0]}}=RelatedFilter({{var[1][0]}}Filter, name='{{var[0]}}', queryset={{var[1][0]}}.objects.all())
+    {% endfor %}{% for var in modelFields.child_vars[4]%}{{var[0]}}=RelatedFilter({{var[1][0]}}Filter, name='{{var[0]}}', queryset={{var[1][0]}}){% endfor %}class Meta:
         model = {{modelFields.entity_name}}
         fields = { {% for var in modelFields.child_vars[1]%}
             '{{var[0]}}': ['exact', 'in', 'startswith', 'contains'], {% endfor %}{% for var in modelFields.child_vars[2]%}

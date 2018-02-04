@@ -24,7 +24,7 @@ class {{modelFields.entity_name}}Serializer({% if modelFields.child_vars[3].__le
 
 
 
-class {{modelFields.entity_name}}ViewSet(ModelViewSet):
+class {{modelFields.entity_name}}ModelViewSet(ModelViewSet):
     queryset = {{modelFields.entity_name}}.objects.all()
     permission_classes = [permissions.IsAuthenticated]
     filter_class = {{modelFields.entity_name}}Filter

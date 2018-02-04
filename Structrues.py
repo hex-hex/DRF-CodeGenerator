@@ -2,6 +2,7 @@ import itertools
 import jinja2
 from enum import Enum
 from operator import itemgetter
+import re
 
 
 class VarType(Enum):
@@ -75,9 +76,12 @@ class IndentCode:
             type_def = list(itertools.takewhile(lambda x: '(' != x, type_def))
             type_def = ''.join(type_def)
             type_def = KEY_MAP[type_def]
-            return var_names, type_def
-        except Exception:
-            return '', VarType.Unknown
+            reg_param = re.compile('\'[A-Z][a-z]+\'')
+            var_params = list(map(lambda x: reg_param.search(x).group(0).strip('\'') if reg_param.search(x) else '', self.words))
+            var_params = list(filter(lambda x: len(x) > 0, var_params))
+            return var_names, type_def, var_params
+        except Exception as ex:
+            return '', VarType.Unknown, []
 
     def if_empty(self):
         return len(self.code) == 0
@@ -87,11 +91,15 @@ class EntityCode:
     CONTINUE_END = ('\\', ',', '(', '{', '[', '.', '+')
     jinja_env = jinja2.Environment(loader=jinja2.FileSystemLoader('./templates/'))
 
+    def has_base(self):
+        'EntityBase' in self.entity_base
+
     def toCamel(self, snake_name):
         return ''.join([word.capitalize() for word in snake_name.split('_')])
 
     def toLowerCamel(self, snake_name):
-        return snake_name.lower() + snake_name[1:]
+        snake_name = self.toCamel(snake_name)
+        return snake_name[0].lower() + snake_name[1:]
 
     def __init__(self, _code):
         self.codes = _code.split('\n')
@@ -109,23 +117,21 @@ class EntityCode:
         self.code_tree = sorted(self.code_tree, key=itemgetter(0))
 
         def_line = self.code_tree[0][1][0]
-        self.entity_name = def_line.parse_class()
+        self.entity_name, self.entity_base = def_line.parse_class()
         self.var_lines = self.code_tree[1][1]
 
         self.child_vars = [x.parse_var() for x in self.var_lines]
         self.child_vars = list(filter(lambda x: x[1] != VarType.Unknown, self.child_vars))
         self.child_vars = sorted(self.child_vars, key=lambda x: x[1].value)
         self.child_vars = itertools.groupby(self.child_vars, key=itemgetter(1))
-        self.child_vars = [(var_type.value, [var_body[0][0] for var_body in list(var_declare)]) for
+        self.child_vars = [(var_type.value, [(var_body[0][0], var_body[2]) for var_body in list(var_declare)]) for
                            var_type, var_declare in self.child_vars]
         self.child_vars = dict(self.child_vars)
 
-        service_output = self.jinja_env.get_template('all.py') \
-            .render({'modelFields': self})
+        service_output = self.jinja_env.get_template('all.py').render({'modelFields': self})
         print(service_output)
 
-        with open('./kotlin_model/{}.kt'.format(self.toCamel(self.entity_name[0])), 'w+') as file:
-            model_output = self.jinja_env.get_template('model.kt') \
-                .render({'modelFields': self})
+        with open('./kotlin_model/{}.kt'.format(self.toCamel(self.entity_name)), 'w+') as file:
+            model_output = self.jinja_env.get_template('model.kt') .render({'modelFields': self})
             file.write(model_output)
 

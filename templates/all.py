@@ -1,23 +1,26 @@
-class {{modelFields.entity_name[0]}}Filter(FilterSet):
+class {{modelFields.entity_name}}Filter(FilterSet):
     class Meta:
-        model = {{modelFields.entity_name[0]}}
+        model = {{modelFields.entity_name}}
         fields = { {% for var in modelFields.child_vars[1]%}
-            '{{var}}': ['exact', 'in', 'startswith', 'contains'], {% endfor %}{% for var in modelFields.child_vars[2]%}
-            '{{var}}': ['exact', 'lt', 'gt'], {% endfor %}
+            '{{var[0]}}': ['exact', 'in', 'startswith', 'contains'], {% endfor %}{% for var in modelFields.child_vars[2]%}
+            '{{var[0]}}': ['exact', 'lt', 'gt'], {% endfor %}
         }
 
 
-class {{modelFields.entity_name[0]}}Serializer(serializers.ModelSerializer):
-    class Meta:
-        model = {{modelFields.entity_name[0]}}
-        fields = ('pk', {% for var in modelFields.child_vars[1]%}'{{var}}', {% endfor %}{% for var in modelFields.child_vars[2]%}'{{var}}', {% endfor %})
+class {{modelFields.entity_name}}Serializer(serializers.ModelSerializer):
+    {% for var in modelFields.child_vars[3]%}{{var[0]}}={{var[1][0]}}Serializer()
+    {% endfor %}{% for var in modelFields.child_vars[4]%}{{var[0]}}={{var[1][0]}}Serializer(many=True){% endfor %}class Meta:
+        model = {{modelFields.entity_name}}
+        {% if modelFields.has_base %}read_only_fields = ('date_create', 'date_update'){% endif %}
+        fields = ('pk', {% for var in modelFields.child_vars[1]%}'{{var[0]}}', {% endfor %}{% for var in modelFields.child_vars[2]%}'{{var[0]}}',
+            {% endfor %}{% for var in modelFields.child_vars[3]%}'{{var[0]}}', {% endfor %}{% for var in modelFields.child_vars[4]%}'{{var[0]}}', {% endfor %})
 
 
-class {{modelFields.entity_name[0]}}ViewSet(ModelViewSet):
-    queryset = {{modelFields.entity_name[0]}}.objects.all()
+class {{modelFields.entity_name}}ViewSet(ModelViewSet):
+    queryset = {{modelFields.entity_name}}.objects.all()
     permission_classes = [permissions.IsAuthenticated]
-    filter_class = {{modelFields.entity_name[0]}}Filter
-    serializer_class = {{modelFields.entity_name[0]}}Serializer
+    filter_class = {{modelFields.entity_name}}Filter
+    serializer_class = {{modelFields.entity_name}}Serializer
     filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter,)
-    search_fields = ({% for var in modelFields.child_vars[1]%}'@{{var}}', {% endfor %}{% for var in modelFields.child_vars[2]%}'={{var}}', {% endfor %})
+    search_fields = ({% for var in modelFields.child_vars[1]%}'@{{var[0]}}', {% endfor %}{% for var in modelFields.child_vars[2]%}'={{var[0]}}', {% endfor %})
     ordering_fields = '__all__'

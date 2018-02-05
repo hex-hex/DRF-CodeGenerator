@@ -19,7 +19,7 @@ class {{modelFields.entity_name}}Serializer({% if modelFields.child_vars[3].__le
     user_update = HiddenField(default=CurrentUserDefault()){% endif %}
     class Meta:
         model = {{modelFields.entity_name}}
-        {% if modelFields.has_base() %}read_only_fields = ('date_create', 'date_update'){% endif %}
+        {% if modelFields.has_base() %}read_only_fields = ('pk', 'date_create', 'date_update', 'user_create, 'user_update'){% endif %}
         fields = ('pk', {% for var in modelFields.child_vars[1]%}'{{var[0]}}', {% endfor %}{% for var in modelFields.child_vars[2]%}'{{var[0]}}',
             {% endfor %}{% for var in modelFields.child_vars[3]%}'{{var[0]}}', {% endfor %}{% for var in modelFields.child_vars[4]%}'{{var[0]}}', {% endfor %}
             {% if modelFields.has_base() %}'date_create', 'date_update',{% endif %})

@@ -1,7 +1,7 @@
 class {{modelFields.entity_name}}Filter(FilterSet):
     {% for var in modelFields.child_vars[3]%}{{var[0]}} = RelatedFilter({{var[1][0]}}Filter, name='{{var[0]}}', queryset={{var[1][0]}}.objects.all())
-    {% endfor %}{% for var in modelFields.child_vars[4]%}{{var[0]}} = RelatedFilter({{var[1][0]}}Filter, name='{{var[0]}}', queryset={{var[1][0]}}.objects.all()){% endfor %}{% if modelFields.has_base() %}
-    date_create = DateFromToRangeFilter()
+    {% endfor %}{% for var in modelFields.child_vars[4]%}{{var[0]}} = RelatedFilter({{var[1][0]}}Filter, name='{{var[0]}}', queryset={{var[1][0]}}.objects.all()){% endfor %}
+    {% if modelFields.has_base() %}date_create = DateFromToRangeFilter()
     date_update = DateFromToRangeFilter(){% endif %}
     class Meta:
         model = {{modelFields.entity_name}}
@@ -14,7 +14,9 @@ class {{modelFields.entity_name}}Filter(FilterSet):
 
 class {{modelFields.entity_name}}Serializer({% if modelFields.child_vars[3].__len__() + modelFields.child_vars[4].__len__() > 0  %}WritableNestedModelSerializer{% else %}ModelSerializer{% endif %}):
     {% for var in modelFields.child_vars[3]%}{{var[0]}}={{var[1][0]}}Serializer()
-    {% endfor %}{% for var in modelFields.child_vars[4]%}{{var[0]}}={{var[1][0]}}Serializer(many=True){% endfor %}
+    {% endfor %}{% for var in modelFields.child_vars[4]%}{{var[0]}}={{var[1][0]}}Serializer(many=True){% endfor %}{% if modelFields.has_base() %}
+    user_create = HiddenField(default=CreateOnlyDefault(CurrentUserDefault()))
+    user_update = HiddenField(default=CurrentUserDefault()){% endif %}
     class Meta:
         model = {{modelFields.entity_name}}
         {% if modelFields.has_base() %}read_only_fields = ('date_create', 'date_update'){% endif %}

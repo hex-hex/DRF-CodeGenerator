@@ -1,6 +1,6 @@
 import itertools
 import jinja2
-from enum import Enum
+from aenum import Enum
 from operator import itemgetter
 import re
 

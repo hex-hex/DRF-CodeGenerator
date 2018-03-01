@@ -2,27 +2,16 @@ from Structrues import EntityCode
 
 if __name__ == '__main__':
     code = """
+class OrderDetail(EntityBase):
+    order_header = models.ForeignKey('OrderHeader', on_delete=models.CASCADE)
+    product_case = models.ForeignKey('ProductCase', null=True, blank=True, on_delete=models.CASCADE)
+    unit_price = models.ForeignKey('Price', on_delete=models.SET_NULL, blank=True, null=True)
+    trade_mode = models.IntegerField(default=0, choices=ProductLaunch.TRADE_MODE)
+    quantity = models.PositiveIntegerField(default=1)
+    fulfill_quantity = models.PositiveIntegerField(default=1)
+    tax_percentage = models.FloatField(default=0)
 
-class OrderHeader(EntityBase):
-    ORDER_STATUS = (
-        (0, 'QUOTE'),
-        (1, 'DRAFT'),
-        (2, 'BUYER_CONFIRMED'),
-        (3, 'SELLER_CONFIRMED'),
-        (4, 'BOTH_CONFIRMED'),
-        (5, 'SHIPPING'),
-        (6, 'EXPIRED'),
-        (7, 'DELETED'),
-        (8, 'COMPLETED'),
-    )
-    order_status = models.IntegerField(choices=ORDER_STATUS, default=0)
-    order_number = models.CharField(max_length=16, null=True, blank=True)
-    order_from = models.ForeignKey('Company', related_name='order_from_company', null=True, blank=True)
-    order_to = models.ForeignKey('Company', related_name='order_to_company', null=True, blank=True)
-    bill_to = models.ForeignKey('Company', related_name='bill_to_company', null=True, blank=True)
-    pay_to = models.ForeignKey('Company', related_name='pay_to_company', null=True, blank=True)
-    date_order = models.DateField(null=True, blank=True)
-    description = models.CharField(max_length=1024, null=True, blank=True)
-    
+    def __str__(self):
+        return '{} {}'.format(self.quantity, self.product_case.__str__())
 """
     code = EntityCode(code)

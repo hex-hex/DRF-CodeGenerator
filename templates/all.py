@@ -12,7 +12,7 @@ class {{modelFields.entity_name}}Filter(FilterSet):
 
 
 
-class {{modelFields.entity_name}}Serializer({% if modelFields.child_vars[3].__len__() + modelFields.child_vars[4].__len__() > 0  %}WritableNestedModelSerializer{% else %}ModelSerializer{% endif %}):
+class {{modelFields.entity_name}}Serializer({% if modelFields.child_vars[3].__len__() + modelFields.child_vars[4].__len__() > 0  %}NestedFieldsMixin, WritableNestedModelSerializer{% else %}ModelSerializer{% endif %}):
     {% for var in modelFields.child_vars[3]%}{{var[0]}} = {{var[1][0]}}Serializer()
     {% endfor %}{% for var in modelFields.child_vars[4]%}{{var[0]}} = {{var[1][0]}}Serializer(many=True){% endfor %}{% if modelFields.has_base() %}
     user_create = HiddenField(default=CreateOnlyDefault(CurrentUserDefault()))

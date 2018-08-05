@@ -31,6 +31,6 @@ class {{modelFields.entity_name}}ModelViewSet(ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
     filter_class = {{modelFields.entity_name}}Filter
     serializer_class = {{modelFields.entity_name}}Serializer
-    filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter,)
+    filter_backends = (DjangoFilterBackend, SearchFilter, OrderFilter,)
     search_fields = ({% for var in modelFields.child_vars[1]%}'@{{var[0]}}', '${{var[0]}}', {% endfor %}{% for var in modelFields.child_vars[2]%}'={{var[0]}}', '@{{var[0]}}', {% endfor %})
     ordering_fields = '__all__'
